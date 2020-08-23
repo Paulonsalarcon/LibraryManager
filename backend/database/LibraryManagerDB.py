@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 import yaml
 import logging
 import pathlib
-from tables import User, Author, Book, CoAuthorBook, Borrowing, LibraryHistory, Reservation
+from .tables import Base, User, Author, Book, CoAuthorBook, Borrowing, LibraryHistory, Reservation, BlacklistToken
 
 
 databasePath = pathlib.Path(__file__).parent.absolute()
@@ -28,6 +28,7 @@ class LibraryManagerDB:
             logging.debug("Instance of LibraryManagerDB created successfully")
         except:
             logging.critical("Failed create instance of LibraryManagerDB")
+            logging.exception('')
 
     def __loadDBConfig(self):
         logging.debug("loadDBConfig started")
@@ -37,6 +38,7 @@ class LibraryManagerDB:
             logging.info("Loaded Database Configuration: "+dbConfigPath._str)
         except:
             logging.critical("Error loading Database Configuration:"+dbConfigPath._str)
+            logging.exception('')
 
         logging.debug("loadDBConfig finished")
         return dbConfig
@@ -45,9 +47,10 @@ class LibraryManagerDB:
         logging.debug("Connect started")
         try:
             self.engine.connect()
-            logging.info("Connected to database: ", self.dbConfig["db"])
+            logging.info("Connected to database: "+self.dbConfig["db"])
         except:
-            logging.critical("Unable to connect to database: ", self.dbConfig["db"])
+            logging.critical("Unable to connect to database: "+self.dbConfig["db"])
+            logging.exception('')
 
         logging.debug("Connect finished")
     
@@ -60,6 +63,7 @@ class LibraryManagerDB:
         Borrowing().create(self.engine, self.meta)
         LibraryHistory().create(self.engine, self.meta)
         Reservation().create(self.engine, self.meta)
+        BlacklistToken().create(self.engine, self.meta)
 
 
 
@@ -70,8 +74,9 @@ class LibraryManagerDB:
         Author().migrate(self.engine)
         Book().migrate(self.engine)
         CoAuthorBook().migrate(self.engine)
+        BlacklistToken().migrate(self.engine)
 
-    def OpenSession():
+    def OpenSession(self):
         logging.debug("OpenSession started")
         try:
             Session = sessionmaker(bind=self.engine)
@@ -79,7 +84,7 @@ class LibraryManagerDB:
             logging.info("Session created")
             return self.session
         except:
-            logging.critical("Unable to create session in database: ", self.dbConfig["db"])
+            logging.critical("Unable to create session in database: "+self.dbConfig["db"])
             return None
 
 

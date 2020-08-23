@@ -6,3 +6,4 @@ from .CoAuthorBook import *
 from .Borrowing import *
 from .LibraryHistory import *
 from .Reservation import *
+from .BlacklistToken import *

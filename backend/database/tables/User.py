@@ -17,6 +17,18 @@ class User(Base):
     currentborrowedbooks = Column(Integer)
     reservedbooks = Column(Integer)
 
+    def __init__(self, fullname=None, nickname=None, phone=None, email=None, role=None, password=None, totalborrowedbooks=None, currentborrowedbooks=None, reservedbooks=None):
+        self.fullname = fullname
+        self.nickname = nickname
+        self.phone = phone
+        self.email = email
+        self.role = role
+        self.password = password
+        self.totalborrowedbooks = totalborrowedbooks
+        self.currentborrowedbooks = currentborrowedbooks
+        self.reservedbooks = reservedbooks
+
+
     def __repr__(self):
         return "<User(fullname='%s', nickname='%s', password='%s', phone='%s', email='%s', role='%s', totalborrowedbooks='%d', currentborrowedbooks='%d', reservedbooks='%d')>" % (
                                   self.fullname, self.nickname, self.password,
