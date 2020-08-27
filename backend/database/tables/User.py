@@ -9,7 +9,7 @@ class User(Base):
     id = Column(Integer,  Sequence('user_id_seq'), primary_key=True)
     fullname = Column(String(50), nullable=False)
     nickname = Column(String(50), nullable=False)
-    password = Column(String(50), nullable=False)
+    password = Column(String(1000), nullable=False)
     phone = Column(String(50), nullable=False)
     email = Column(String(50), nullable=False)
     role = Column(String(50), nullable=False)
@@ -41,7 +41,7 @@ class User(Base):
         Column('id',Integer,  Sequence('user_id_seq'), primary_key=True),
         Column('fullname', String(50), nullable=False),
         Column('nickname', String(50), nullable=False),
-        Column('password', String(50), nullable=False),
+        Column('password', String(1000), nullable=False),
         Column('phone', String(50), nullable=False),
         Column('email', String(50), nullable=False),
         Column('role', String(50), nullable=False),

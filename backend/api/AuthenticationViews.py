@@ -1,6 +1,7 @@
 from .LibraryManagementViews import libraryManager
 from database.tables import User, BlacklistToken
 from api import db, bcrypt, app, token
+import bcrypt
 from flask import request, make_response, jsonify
 from flask.views import MethodView
 import logging
@@ -25,10 +26,9 @@ class LoginAPI(MethodView):
             user = session.query(User).filter_by(
                 nickname=nickname
             ).first()
-            #if user and bcrypt.check_password_hash(
-                #user.password, password
-            #):
-            if user and user.password==password:
+            if user and bcrypt.checkpw(
+                password.encode('utf-8'), user.password.encode('utf-8')
+            ):
                 auth_token = token.encode_auth_token(user.id)
                 if auth_token:
                     responseObject = {

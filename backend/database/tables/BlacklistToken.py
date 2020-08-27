@@ -37,9 +37,9 @@ class BlacklistToken(Base):
             logging.error("Failed Create Table BlacklistToken")
 
     @staticmethod
-    def check_blacklist(auth_token):
+    def check_blacklist(session,auth_token):
         # check whether auth token has been blacklisted
-        res = BlacklistToken.query.filter_by(token=str(auth_token)).first()
+        res = session.query(BlacklistToken).filter_by(token=str(auth_token)).first()
         if res:
             return True
         else:

@@ -16,6 +16,7 @@ db.Connect()
 
 from .token import *
 from .UsersViews import *
+from .ResetPasswordViews import *
 from .AuthenticationViews import *
 from .LibraryManagementViews import libraryManager
 
