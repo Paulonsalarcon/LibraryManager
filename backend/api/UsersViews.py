@@ -7,6 +7,8 @@ import json
 from flask import request, make_response, jsonify, abort
 from flask.views import MethodView
 from api import db, token, bcrypt
+import bcrypt
+import logging
 from database.tables import User
 from .LibraryManagementViews import libraryManager
 
@@ -90,39 +92,47 @@ class UserView(MethodView):
         return make_response(jsonify(responseObject)), 401
 
     def post(self):
-        session = db.OpenSession()
-        requesterId = token.hasValidToken(request.headers.get('Authorization'))
+        try:
+            session = db.OpenSession()
+            requesterId = token.hasValidToken(request.headers.get('Authorization'))
         
-        if isinstance(requesterId, int):
-            user = session.query(User).filter_by(id=id).first()
-            if user.role=="admin":
-                role = request.form.get('role')
+            if isinstance(requesterId, int):
+                user = session.query(User).filter_by(id=requesterId).first()
+                if user.role=="admin":
+                    role = request.form.get('role')
+                else:
+                    role="client"
             else:
                 role="client"
-        else:
-            role="client"
 
-        fullname = request.form.get('fullname')
-        nickname = request.form.get('nickname')
-        password =  bcrypt.hashpw(request.form.get('password').encode('utf8'), bcrypt.gensalt()).decode('utf8')
-        phone = request.form.get('phone')
-        email = request.form.get('email')
+            fullname = request.form.get('fullname')
+            nickname = request.form.get('nickname')
+            password =  bcrypt.hashpw(request.form.get('password').encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
+            phone = request.form.get('phone')
+            email = request.form.get('email')
         
-        user = User(fullname, nickname, phone, email, role, password)
+            newUser = User(fullname, nickname, phone, email, role, password)
 
-        session.add(user)
-        session.commit()
-        return jsonify({user.id: {
-            'fullname': user.fullname,
-            'nickname': user.nickname,
-            'phone': user.phone,
-            'email': user.email,
-            'role': user.role,
-        }})
+            session.add(newUser)
+            session.commit()
+            return jsonify({newUser.id: {
+                'fullname': newUser.fullname,
+                'nickname': newUser.nickname,
+                'phone': newUser.phone,
+                'email': newUser.email,
+                'role': newUser.role,
+            }})
+        except:
+            logging.exception('')
+            responseObject = {
+                'status': 'fail',
+                'message': 'Failed to create new user.'
+            }
+        return make_response(jsonify(responseObject)), 500
     
 user_view =  UserView.as_view('user_view')
 libraryManager.add_url_rule(
-    '/user/', 
+    '/user', 
     view_func=user_view, 
     methods=['GET', 'POST']
 )

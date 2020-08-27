@@ -43,8 +43,7 @@ class LoginAPI(MethodView):
                     'message': 'User does not exist.'
                 }
                 return make_response(jsonify(responseObject)), 404
-        except Exception as e:
-            print(e)
+        except Exception:
             logging.exception('')
             responseObject = {
                 'status': 'fail',

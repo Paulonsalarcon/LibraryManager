@@ -34,7 +34,7 @@ class ResetPassword(MethodView):
         try:
             user = session.query(User).filter_by(nickname=nickname).first()
 
-            user.password = bcrypt.hashpw(request.form.get('password').encode('utf8'), bcrypt.gensalt()).decode('utf8')
+            user.password = bcrypt.hashpw(request.form.get('password').encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         
             session.commit()
 
