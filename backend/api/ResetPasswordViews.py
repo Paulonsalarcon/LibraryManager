@@ -24,7 +24,7 @@ class ResetPassword(MethodView):
             }
             return make_response(jsonify(responseObject)), 401
         user = session.query(User).filter_by(id=requesterId).first()
-        if not ((user.nickname==nickname) and (user.role=="admin")):
+        if not ((user.nickname==nickname) or (user.role=="admin")):
             responseObject = {
             'status': 'forbidden',
             'message': 'Your user does not have permission to perform this action.'

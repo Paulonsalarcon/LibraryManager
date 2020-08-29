@@ -107,7 +107,7 @@ class UserView(MethodView):
 
             fullname = request.form.get('fullname')
             nickname = request.form.get('nickname')
-            password =  bcrypt.hashpw(request.form.get('password').encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
+            password =  bcrypt.hashpw(request.form.get('password').encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
             phone = request.form.get('phone')
             email = request.form.get('email')
         
@@ -130,7 +130,57 @@ class UserView(MethodView):
             }
         return make_response(jsonify(responseObject)), 500
     
+class UpdateUserView(MethodView):
+    def post(self,nickname=None):
+        try:
+            session = db.OpenSession()
+            requesterId = token.hasValidToken(request.headers.get('Authorization'))
+            if not isinstance(requesterId, int):
+                responseObject = {
+                'status': 'forbidden',
+                'message': 'Invalid Token'
+                }
+                return make_response(jsonify(responseObject)), 401
+
+            requesterUser = session.query(User).filter_by(id=requesterId).first()
+
+            if not ((requesterUser.nickname==nickname) or (requesterUser.role=="admin")):
+                responseObject = {
+                'status': 'forbidden',
+                'message': 'Your user does not have permission to perform this action.'
+                }
+                return make_response(jsonify(responseObject)), 401
+            
+            user = session.query(User).filter_by(nickname=nickname).first()
+
+            if request.form.get('fullname'):
+                user.fullname = request.form.get('fullname')
+            
+            if request.form.get('phone'):
+                user.phone = request.form.get('phone')
+            
+            if request.form.get('email'):
+                user.email = request.form.get('email')
+            
+            session.commit()
+
+            responseObject = {
+                'status': 'Success',
+                'message': 'User Information successfully updated.'
+            }
+            return make_response(jsonify(responseObject)), 200
+        except:
+            logging.exception('')
+            responseObject = {
+                'status': 'fail',
+                'message': 'User Update Failed'
+            }
+            return make_response(jsonify(responseObject)), 500
+
+
 user_view =  UserView.as_view('user_view')
+update_user_view = UpdateUserView.as_view('update_user_view')
+
 libraryManager.add_url_rule(
     '/user', 
     view_func=user_view, 
@@ -145,4 +195,9 @@ libraryManager.add_url_rule(
     '/user/<field>&<value>', 
     view_func=user_view, 
     methods=['GET']
+)
+libraryManager.add_url_rule(
+    '/updateuser/<nickname>', 
+    view_func=update_user_view, 
+    methods=['POST']
 )
