@@ -11,9 +11,14 @@ class Author(Base):
     nickname = Column(String(50), nullable=False)
     authortype = Column(String(50))
 
+    def __init__(self,fullname=None,nickname=None,authortype=None):
+        self.fullname=fullname
+        self.nickname=nickname
+        self.authortype=authortype
+
     def __repr__(self):
         return "<Author(fullname='%s', nickname='%s', authortype='%s')>" % (
-                                  self.name, self.fullname, self.nickname,
+                                  self.fullname, self.nickname,
                                   self.authortype)
 
     def create(self, engine, meta):

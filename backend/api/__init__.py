@@ -18,6 +18,7 @@ from .token import *
 from .UsersViews import *
 from .ResetPasswordViews import *
 from .AuthenticationViews import *
+from .BookViews import *
 from .LibraryManagementViews import libraryManager
 
 app.register_blueprint(libraryManager)

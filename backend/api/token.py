@@ -1,5 +1,5 @@
 from api import db
-from database.tables import BlacklistToken
+from database.tables import BlacklistToken, User
 import datetime
 import jwt
 import logging
@@ -44,6 +44,7 @@ def decode_auth_token(auth_token):
         payload = jwt.decode(auth_token, secret_key,algorithm=['HS256'])
         session = db.OpenSession()
         is_blacklisted_token = BlacklistToken.check_blacklist(session,auth_token)
+        session.close()
         if is_blacklisted_token:
             return 'Token blacklisted. Please log in again.'
         else:
@@ -76,4 +77,12 @@ def hasValidToken(auth_header):
             }
             return responseObject
 
+def IsAdmin(userId):
+    session = db.OpenSession()
+    requesterUser = session.query(User).filter_by(id=userId).first()
+    session.close()
+    if requesterUser.role=="admin":
+        return True
+    else:
+        return False
 

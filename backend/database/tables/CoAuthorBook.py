@@ -9,6 +9,10 @@ class CoAuthorBook(Base):
     book = Column(Integer, ForeignKey("books.id"), primary_key=True)
     author = Column(Integer, ForeignKey("authors.id"), primary_key=True)
 
+    def __init__(self,book=None, author=None):
+        self.book=book
+        self.author=author
+
     def __repr__(self):
         return "<CoAuthorBook(book='%d', author='%d')>" % (
                                   self.book, self.author)
