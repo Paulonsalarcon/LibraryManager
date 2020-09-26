@@ -9,6 +9,7 @@ from flask.views import MethodView
 from api import db, token, bcrypt
 import logging
 from database.tables import User, Book, Author, CoAuthorBook
+from sqlalchemy import or_
 from .LibraryManagementViews import libraryManager
 
 class BookView(MethodView):
@@ -25,7 +26,7 @@ class BookView(MethodView):
                 'message': 'Invalid Token'
                 }
                 return make_response(jsonify(responseObject)), 401
-            if not ( id and field):
+            if not ( id or field):
                 books = self.SearchAllBooks() 
             elif id:
                 books = self.SearchBookById(id)
@@ -99,7 +100,7 @@ class BookView(MethodView):
         coauthorsbooks = session.query(CoAuthorBook).filter(CoAuthorBook.author.in_(authorsId))
         for coauthorbook in coauthorsbooks:
             booksId.append(coauthorbook.book)
-        return session.query(Book).filter(Book.id.in_(booksId))
+        return session.query(Book).filter(or_(Book.id.in_(booksId),Book.firstauthor.in_(authorsId))).distinct()
 
     def FindAuthorsByBook(self, bookId):
         try:
