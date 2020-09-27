@@ -111,7 +111,7 @@ class UserView(MethodView):
             phone = request.form.get('phone')
             email = request.form.get('email')
         
-            newUser = User(fullname, nickname, phone, email, role, password)
+            newUser = User(fullname, nickname, phone, email, role, password, 0, 0, 0)
 
             session.add(newUser)
             session.commit()

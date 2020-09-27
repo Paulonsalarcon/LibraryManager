@@ -52,7 +52,6 @@ class BookView(MethodView):
             return jsonify(res)
         except:
                 logging.exception('')
-                print(books)
                 responseObject = {
                     'status': 'fail',
                     'message': 'Failed to search Books.'

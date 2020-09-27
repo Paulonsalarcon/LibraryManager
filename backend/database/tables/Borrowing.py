@@ -13,6 +13,15 @@ class Borrowing(Base):
     returned = Column(Boolean)
     requestedreturndate = Column(Date)
     actualreturndate = Column(Date)
+
+    def __init__(self, user=None, book=None, borrowingdate=None, returned=None, requestedreturndate=None, actualreturndate=None):
+        self.user = user
+        self.book = book
+        self.borrowingdate = borrowingdate
+        self.returned = returned
+        self.requestedreturndate = requestedreturndate
+        self.actualreturndate = actualreturndate
+
     
 
     def __repr__(self):
