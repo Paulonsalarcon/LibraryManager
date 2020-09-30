@@ -20,6 +20,7 @@ from .ResetPasswordViews import *
 from .AuthenticationViews import *
 from .BookViews import *
 from .BorrowViews import *
+from .ReturnViews import *
 from .LibraryManagementViews import libraryManager
 
 app.register_blueprint(libraryManager)

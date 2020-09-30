@@ -89,13 +89,13 @@ class BorrowView(MethodView):
             elif field == "book":
                 return session.query(Borrowing).filter_by(book=value)
             elif field == "borrowingdate":
-                return session.query(Borrowing).filter_by(borrowingdate=datetime.strptime(value, '%d-%m-%Y'))
+                return session.query(Borrowing).filter(Borrowing.borrowingdate==datetime.strptime(value, '%d-%m-%Y').date())
             elif field == "returned":
                 return session.query(Borrowing).filter_by(returned=value)
             elif field == "requestedreturndate":
-                return session.query(Borrowing).filter_by(requestedreturndate=datetime.strptime(value, '%d-%m-%Y'))
+                return session.query(Borrowing).filter(Borrowing.requestedreturndate==datetime.strptime(value, '%d-%m-%Y').date())
             elif field == "actualreturndate":
-                return session.query(Borrowing).filter_by(actualreturndate=datetime.strptime(value, '%d-%m-%Y'))
+                return session.query(Borrowing).filter(Borrowing.actualreturndate==datetime.strptime(value, '%d-%m-%Y').date())
             return None
         except:
             logging.exception('')
@@ -192,7 +192,7 @@ class BorrowView(MethodView):
             user = session.query(User).filter_by(id=borrowingRequest["user"]).first()
             if book.availablequantity == 0:
                 return None, {}
-            newBorrowing = Borrowing(user.id, book.id,date.now(),False,datetime.today()+timedelta(days=BorrowingDays))
+            newBorrowing = Borrowing(user.id, book.id,date.today(),False,date.today()+timedelta(days=BorrowingDays))
             book.availablequantity -= 1
             user.totalborrowedbooks += 1
             user.currentborrowedbooks += 1
